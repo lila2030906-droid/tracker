@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BizTrack Pro — Email Marketing Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #050508; --card: #0f0f18; --accent: #7c6fff; --accent2: #ff6b9d;
+  --text: #f0f0f8; --muted: #8888aa; --border: rgba(255,255,255,0.08);
+  --green: #00e5a0; --red: #ff4f6e; --amber: #ffb547;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px; }
+
+/* LAYOUT */
+.container { max-width: 1200px; margin: 0 auto; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+.logo { font-size: 24px; font-weight: 800; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.stat-card { background: var(--card); padding: 20px; border-radius: 16px; border: 1px solid var(--border); }
+.stat-label { font-family: 'DM Mono'; font-size: 12px; color: var(--muted); text-transform: uppercase; }
+.stat-val { font-size: 28px; font-weight: 800; margin-top: 5px; color: var(--green); }
+
+/* SECTIONS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+.card { background: var(--card); border-radius: 20px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 25px; }
+.card-head { padding: 20px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); font-weight: 700; display: flex; justify-content: space-between; }
+
+/* FORMS */
+.card-body { padding: 20px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; font-size: 11px; font-family: 'DM Mono'; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; }
+.form-group input { width: 100%; background: #161625; border: 1px solid var(--border); padding: 12px; border-radius: 10px; color: white; outline: none; transition: 0.2s; }
+.form-group input:focus { border-color: var(--accent); }
+.btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; }
+.btn-mail { background: var(--accent); color: white; }
+.btn-ip { background: var(--accent2); color: white; }
+.btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th { text-align: left; padding: 12px; font-size: 11px; font-family: 'DM Mono'; color: var(--muted); border-bottom: 1px solid var(--border); }
+td { padding: 12px; font-size: 14px; border-bottom: 1px dotted var(--border); }
+.amt { font-family: 'DM Mono'; font-weight: 600; }
+.del-btn { color: var(--red); cursor: pointer; background: none; border: none; font-family: 'DM Mono'; font-size: 10px; }
+
+@media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="logo">BizTrack PRO</div>
+      <p style="font-size: 12px; color: var(--muted); font-family: 'DM Mono';">OFFLINE MARKETING DASHBOARD</p>
+    </div>
+    <div id="live-date" style="font-family: 'DM Mono';"></div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Spent (Mails)</div>
+      <div class="stat-val" id="total-mail-cost">৳0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Spent (IPs)</div>
+      <div class="stat-val" id="total-ip-cost" style="color: var(--accent2);">৳0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Investment</div>
+      <div class="stat-val" id="grand-total" style="color: var(--amber);">৳0</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">📧 Buy Mails</div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>Mail Per Price (৳)</label>
+          <input type="number" id="m-price" placeholder="e.g. 5">
+        </div>
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" id="m-qty" placeholder="e.g. 100">
+        </div>
+        <div class="form-group">
+          <label>Purchase Date</label>
+          <input type="date" id="m-date">
+        </div>
+        <button class="btn btn-mail" onclick="addEntry('mail')">Add Mail Purchase</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">🌐 Buy IPs</div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>IP Per Price (৳)</label>
+          <input type="number" id="ip-price" placeholder="e.g. 120">
+        </div>
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" id="ip-qty" placeholder="e.g. 10">
+        </div>
+        <div class="form-group">
+          <label>Purchase Date</label>
+          <input type="date" id="ip-date">
+        </div>
+        <button class="btn btn-ip" onclick="addEntry('ip')">Add IP Purchase</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">📜 All Transactions 
+      <select id="filter" onchange="renderTables()" style="background:#161625; color:white; border:none; padding:5px; border-radius:5px; font-size:12px;">
+        <option value="all">Show All</option>
+        <option value="mail">Mails Only</option>
+        <option value="ip">IPs Only</option>
+      </select>
+    </div>
+    <div class="card-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th><th>Date</th><th>Unit Price</th><th>Qty</th><th>Total</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="txn-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let data = JSON.parse(localStorage.getItem('biz_pro_data')) || [];
+
+function save() {
+  localStorage.setItem('biz_pro_data', JSON.stringify(data));
+  renderTables();
+}
+
+function addEntry(type) {
+  const pId = type === 'mail' ? 'm-price' : 'ip-price';
+  const qId = type === 'mail' ? 'm-qty' : 'ip-qty';
+  const dId = type === 'mail' ? 'm-date' : 'ip-date';
+
+  const price = parseFloat(document.getElementById(pId).value);
+  const qty = parseInt(document.getElementById(qId).value);
+  const date = document.getElementById(dId).value || new Date().toISOString().split('T')[0];
+
+  if(!price || !qty) { alert("Doya kore price ebong quantity likhun!"); return; }
+
+  data.unshift({ id: Date.now(), type, price, qty, total: price * qty, date });
+  
+  // Clear inputs
+  document.getElementById(pId).value = '';
+  document.getElementById(qId).value = '';
+  save();
+}
+
+function deleteEntry(id) {
+  if(confirm("Eita delete korte chan?")) {
+    data = data.filter(item => item.id !== id);
+    save();
+  }
+}
+
+function renderTables() {
+  const filter = document.getElementById('filter').value;
+  const tbody = document.getElementById('txn-body');
+  let mailTotal = 0;
+  let ipTotal = 0;
+  
+  tbody.innerHTML = '';
+  
+  data.forEach(item => {
+    if(item.type === 'mail') mailTotal += item.total;
+    if(item.type === 'ip') ipTotal += item.total;
+
+    if(filter === 'all' || filter === item.type) {
+      tbody.innerHTML += `
+        <tr>
+          <td><span style="color:${item.type==='mail'?'var(--accent)':'var(--accent2)'}">${item.type.toUpperCase()}</span></td>
+          <td style="color:var(--muted)">${item.date}</td>
+          <td class="amt">৳${item.price}</td>
+          <td>${item.qty}</td>
+          <td class="amt" style="color:var(--green)">৳${item.total}</td>
+          <td><button class="del-btn" onclick="deleteEntry(${item.id})">Remove</button></td>
+        </tr>
+      `;
+    }
+  });
+
+  document.getElementById('total-mail-cost').textContent = '৳' + mailTotal.toLocaleString();
+  document.getElementById('total-ip-cost').textContent = '৳' + ipTotal.toLocaleString();
+  document.getElementById('grand-total').textContent = '৳' + (mailTotal + ipTotal).toLocaleString();
+}
+
+// Set Today's Date
+document.getElementById('m-date').value = new Date().toISOString().split('T')[0];
+document.getElementById('ip-date').value = new Date().toISOString().split('T')[0];
+document.getElementById('live-date').textContent = new Date().toDateString();
+
+renderTables();
+</script>
+
+</body>
+</html>
