@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BizTrack Premium — Marketing Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 /* --- THEME VARIABLES --- */
 :root {
@@ -49,12 +50,12 @@ body {
   padding: 30px 20px;
   transition: background-color 0.4s ease, color 0.4s ease;
 }
-.container { max-width: 1200px; margin: 0 auto; }
+.container { max-width: 1400px; margin: 0 auto; }
 
 /* --- HEADER & TOGGLE --- */
 .header { 
   display: flex; justify-content: space-between; align-items: center; 
-  margin-bottom: 40px; 
+  margin-bottom: 40px; flex-wrap: wrap; gap: 20px;
 }
 .logo-area h1 { 
   font-size: 28px; font-weight: 800; letter-spacing: -0.5px;
@@ -65,24 +66,28 @@ body {
   font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; 
   letter-spacing: 1px; margin-top: 4px; font-weight: 500;
 }
-.header-actions { display: flex; align-items: center; gap: 20px; }
+.header-actions { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
 .date-badge {
   background: var(--surface); padding: 8px 16px; border-radius: 30px;
   font-size: 13px; font-weight: 600; box-shadow: var(--shadow);
   border: 1px solid var(--border); transition: 0.4s;
 }
-.theme-btn {
+.theme-btn, .action-btn {
   background: var(--surface); border: 1px solid var(--border);
   color: var(--text-main); padding: 10px; border-radius: 50%;
   cursor: pointer; box-shadow: var(--shadow); width: 45px; height: 45px;
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.theme-btn:hover { transform: scale(1.1); border-color: var(--accent); }
+.action-btn {
+  width: auto; padding: 10px 16px; border-radius: 12px; font-size: 14px; font-weight: 600;
+  gap: 8px;
+}
+.theme-btn:hover, .action-btn:hover { transform: scale(1.05); border-color: var(--accent); }
 
 /* --- STATS GRID --- */
 .stats-grid { 
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
   gap: 24px; margin-bottom: 40px; 
 }
 .stat-card { 
@@ -109,16 +114,18 @@ body {
 
 .stat-label { font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 .stat-val { font-size: 32px; font-weight: 800; margin-top: 8px; font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; }
+.stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 8px; font-weight: 500; }
 
 /* --- MAIN SECTIONS --- */
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.grid-3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 24px; margin-bottom: 24px; }
 .card { 
   background: var(--surface); border-radius: 24px; box-shadow: var(--shadow); 
   border: 1px solid var(--border); overflow: hidden; transition: 0.4s;
 }
 .card-head { 
   padding: 24px; border-bottom: 1px solid var(--border); 
-  font-weight: 700; font-size: 18px; display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; font-size: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
 }
 .card-body { padding: 24px; }
 
@@ -128,13 +135,13 @@ body {
   display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); 
   margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;
 }
-.form-group input { 
+.form-group input, .form-group select { 
   width: 100%; background: var(--bg); border: 1px solid var(--border); 
   padding: 14px 16px; border-radius: 12px; color: var(--text-main); 
   font-family: 'Plus Jakarta Sans', sans-serif; font-size: 14px; font-weight: 500;
   outline: none; transition: 0.3s;
 }
-.form-group input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.1); }
+.form-group input:focus, .form-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.1); }
 
 .btn { 
   width: 100%; padding: 16px; border-radius: 14px; border: none; 
@@ -145,13 +152,18 @@ body {
 .btn-mail:hover { background: var(--accent-hover); transform: translateY(-2px); }
 .btn-ip { background: var(--accent2); color: #fff; box-shadow: 0 10px 20px rgba(0, 181, 216, 0.2); }
 .btn-ip:hover { opacity: 0.9; transform: translateY(-2px); }
+.btn-sm { padding: 8px 16px; width: auto; font-size: 12px; }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-success { background: var(--green); color: #fff; }
 
 /* --- TABLES --- */
-.filter-select {
+.filter-group { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.filter-select, .search-input {
   background: var(--bg); color: var(--text-main); border: 1px solid var(--border);
   padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
   outline: none; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
 }
+.search-input { min-width: 200px; }
 table { width: 100%; border-collapse: collapse; }
 th { 
   text-align: left; padding: 16px; font-size: 12px; color: var(--text-muted); 
@@ -166,14 +178,52 @@ tbody tr:hover { background: rgba(163, 174, 209, 0.05); }
 .badge-mail { background: rgba(67, 24, 255, 0.1); color: var(--accent); }
 .badge-ip { background: rgba(0, 181, 216, 0.1); color: var(--accent2); }
 .amt { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
-.del-btn { 
-  background: rgba(238, 93, 80, 0.1); color: var(--red); padding: 6px 12px;
-  border: none; border-radius: 8px; font-size: 12px; font-weight: 600;
+.action-btns { display: flex; gap: 8px; }
+.del-btn, .edit-btn { 
+  padding: 6px 12px; border: none; border-radius: 8px; font-size: 12px; font-weight: 600;
   cursor: pointer; transition: 0.2s;
 }
+.del-btn { background: rgba(238, 93, 80, 0.1); color: var(--red); }
 .del-btn:hover { background: var(--red); color: white; }
+.edit-btn { background: rgba(67, 24, 255, 0.1); color: var(--accent); }
+.edit-btn:hover { background: var(--accent); color: white; }
 
-@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+/* --- CHART CONTAINER --- */
+.chart-container { position: relative; height: 250px; }
+
+/* --- MODAL --- */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center;
+  z-index: 1000; backdrop-filter: blur(4px);
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--surface); padding: 30px; border-radius: 20px;
+  box-shadow: var(--shadow); max-width: 500px; width: 90%;
+  border: 1px solid var(--border);
+}
+.modal h3 { margin-bottom: 20px; font-size: 20px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+/* --- NOTIFICATIONS --- */
+.toast {
+  position: fixed; bottom: 30px; right: 30px; padding: 16px 24px;
+  background: var(--surface); border-radius: 12px; box-shadow: var(--shadow);
+  border-left: 4px solid var(--green); transform: translateX(150%); transition: transform 0.3s ease;
+  z-index: 1001; font-weight: 600;
+}
+.toast.show { transform: translateX(0); }
+.toast.error { border-left-color: var(--red); }
+
+@media (max-width: 900px) { 
+  .grid-2, .grid-3 { grid-template-columns: 1fr; } 
+  .form-row { grid-template-columns: 1fr; }
+  .header { flex-direction: column; align-items: flex-start; }
+  .header-actions { width: 100%; justify-content: space-between; }
+  th, td { padding: 12px 8px; font-size: 13px; }
+  .action-btns { flex-direction: column; }
+}
 </style>
 </head>
 <body>
@@ -187,6 +237,8 @@ tbody tr:hover { background: rgba(163, 174, 209, 0.05); }
     <div class="header-actions">
       <div class="date-badge" id="live-date"></div>
       <button class="theme-btn" id="theme-toggle" title="Toggle Light/Dark Mode">🌙</button>
+      <button class="action-btn" onclick="exportData()" title="Export Data">📥 Export</button>
+      <button class="action-btn" onclick="clearAllData()" title="Clear All Data">🗑️ Clear</button>
     </div>
   </div>
 
@@ -195,16 +247,55 @@ tbody tr:hover { background: rgba(163, 174, 209, 0.05); }
       <div class="stat-icon">📧</div>
       <div class="stat-label">Mail Investment</div>
       <div class="stat-val" id="total-mail-cost">৳0</div>
+      <div class="stat-sub"><span id="mail-count">0</span> transactions</div>
     </div>
     <div class="stat-card stat-ip">
       <div class="stat-icon">🌐</div>
       <div class="stat-label">IP Infrastructure</div>
       <div class="stat-val" id="total-ip-cost">৳0</div>
+      <div class="stat-sub"><span id="ip-count">0</span> transactions</div>
     </div>
     <div class="stat-card stat-total">
       <div class="stat-icon">💰</div>
       <div class="stat-label">Total Capital Deployed</div>
       <div class="stat-val" id="grand-total" style="color: var(--green);">৳0</div>
+      <div class="stat-sub"><span id="total-count">0</span> total records</div>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card" style="grid-column: span 2;">
+      <div class="card-head">
+        <span>Spending Analytics</span>
+        <select class="filter-select" id="chart-filter" onchange="updateChart()">
+          <option value="all">All Time</option>
+          <option value="7">Last 7 Days</option>
+          <option value="30">Last 30 Days</option>
+        </select>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="spendingChart"></canvas>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-head">Quick Stats</div>
+      <div class="card-body">
+        <div style="margin-bottom: 20px;">
+          <div class="stat-label">Avg. Mail Cost</div>
+          <div class="stat-val" id="avg-mail" style="font-size: 24px;">৳0</div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <div class="stat-label">Avg. IP Cost</div>
+          <div class="stat-val" id="avg-ip" style="font-size: 24px;">৳0</div>
+        </div>
+        <div>
+          <div class="stat-label">Today's Spending</div>
+          <div class="stat-val" id="today-spending" style="font-size: 24px; color: var(--accent2);">৳0</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -254,12 +345,17 @@ tbody tr:hover { background: rgba(163, 174, 209, 0.05); }
 
   <div class="card" style="margin-bottom: 50px;">
     <div class="card-head">
-      <span>Financial Ledger</span>
-      <select class="filter-select" id="filter" onchange="renderTables()">
-        <option value="all">View All Assets</option>
-        <option value="mail">Mails Only</option>
-        <option value="ip">IPs Only</option>
-      </select>
+      <div class="filter-group">
+        <span>Financial Ledger</span>
+        <input type="text" class="search-input" id="search-input" placeholder="Search transactions..." onkeyup="renderTables()">
+      </div>
+      <div class="filter-group">
+        <select class="filter-select" id="filter" onchange="renderTables()">
+          <option value="all">View All Assets</option>
+          <option value="mail">Mails Only</option>
+          <option value="ip">IPs Only</option>
+        </select>
+      </div>
     </div>
     <div class="card-body" style="padding: 0; overflow-x: auto;">
       <table>
@@ -273,6 +369,32 @@ tbody tr:hover { background: rgba(163, 174, 209, 0.05); }
     </div>
   </div>
 </div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>Edit Transaction</h3>
+    <div class="form-group">
+      <label>Price</label>
+      <input type="number" id="edit-price">
+    </div>
+    <div class="form-group" style="margin-top: 15px;">
+      <label>Quantity</label>
+      <input type="number" id="edit-qty">
+    </div>
+    <div class="form-group" style="margin-top: 15px;">
+      <label>Date</label>
+      <input type="date" id="edit-date">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-success" onclick="saveEdit()">Save Changes</button>
+      <button class="btn btn-danger" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
 
 <script>
 // --- THEME TOGGLE LOGIC ---
@@ -298,10 +420,21 @@ function updateThemeIcon(theme) {
 
 // --- DATA LOGIC ---
 let data = JSON.parse(localStorage.getItem('biz_pro_data')) || [];
+let editId = null;
+let chartInstance = null;
 
 function save() {
   localStorage.setItem('biz_pro_data', JSON.stringify(data));
   renderTables();
+  updateStats();
+  updateChart();
+}
+
+function showToast(message, isError = false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
 function addEntry(type) {
@@ -313,55 +446,230 @@ function addEntry(type) {
   const qty = parseInt(document.getElementById(qId).value);
   const date = document.getElementById(dId).value || new Date().toISOString().split('T')[0];
 
-  if(!price || !qty) { alert("Please enter valid price and quantity."); return; }
+  if(!price || !qty) { showToast("Please enter valid price and quantity.", true); return; }
 
   data.unshift({ id: Date.now(), type, price, qty, total: price * qty, date });
   
   document.getElementById(pId).value = '';
   document.getElementById(qId).value = '';
+  showToast(`${type.toUpperCase()} transaction added successfully!`);
   save();
 }
 
 function deleteEntry(id) {
   if(confirm("Delete this record permanently?")) {
     data = data.filter(item => item.id !== id);
+    showToast("Record deleted successfully!");
     save();
   }
 }
 
-function renderTables() {
-  const filter = document.getElementById('filter').value;
-  const tbody = document.getElementById('txn-body');
-  let mailTotal = 0, ipTotal = 0;
+function editEntry(id) {
+  const item = data.find(i => i.id === id);
+  if(!item) return;
   
-  tbody.innerHTML = '';
+  editId = id;
+  document.getElementById('edit-price').value = item.price;
+  document.getElementById('edit-qty').value = item.qty;
+  document.getElementById('edit-date').value = item.date;
+  document.getElementById('edit-modal').classList.add('active');
+}
+
+function saveEdit() {
+  if(!editId) return;
+  
+  const price = parseFloat(document.getElementById('edit-price').value);
+  const qty = parseInt(document.getElementById('edit-qty').value);
+  const date = document.getElementById('edit-date').value;
+  
+  if(!price || !qty || !date) { showToast("Please fill all fields.", true); return; }
+  
+  const index = data.findIndex(i => i.id === editId);
+  if(index !== -1) {
+    data[index].price = price;
+    data[index].qty = qty;
+    data[index].total = price * qty;
+    data[index].date = date;
+    showToast("Transaction updated successfully!");
+    save();
+  }
+  closeModal();
+}
+
+function closeModal() {
+  document.getElementById('edit-modal').classList.remove('active');
+  editId = null;
+}
+
+function exportData() {
+  if(data.length === 0) { showToast("No data to export!", true); return; }
+  
+  const csvContent = [
+    ['Type', 'Date', 'Unit Cost', 'Quantity', 'Total'],
+    ...data.map(item => [item.type, item.date, item.price, item.qty, item.total])
+  ].map(row => row.join(',')).join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `biztrack_export_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  window.URL.revokeObjectURL(url);
+  showToast("Data exported successfully!");
+}
+
+function clearAllData() {
+  if(data.length === 0) return;
+  if(confirm("Are you sure you want to delete ALL records? This cannot be undone!")) {
+    data = [];
+    showToast("All data cleared!");
+    save();
+  }
+}
+
+function updateStats() {
+  let mailTotal = 0, ipTotal = 0, mailCount = 0, ipCount = 0;
+  const today = new Date().toISOString().split('T')[0];
+  let todaySpending = 0;
   
   data.forEach(item => {
-    if(item.type === 'mail') mailTotal += item.total;
-    if(item.type === 'ip') ipTotal += item.total;
-
-    if(filter === 'all' || filter === item.type) {
-      const badgeClass = item.type === 'mail' ? 'badge-mail' : 'badge-ip';
-      tbody.innerHTML += `
-        <tr>
-          <td><span class="badge ${badgeClass}">${item.type.toUpperCase()}</span></td>
-          <td style="color: var(--text-muted); font-size: 13px;">${item.date}</td>
-          <td class="amt">৳${item.price.toLocaleString()}</td>
-          <td class="amt">${item.qty.toLocaleString()}</td>
-          <td class="amt" style="font-weight: 700; color: var(--text-main);">৳${item.total.toLocaleString()}</td>
-          <td><button class="del-btn" onclick="deleteEntry(${item.id})">Delete</button></td>
-        </tr>
-      `;
-    }
+    if(item.type === 'mail') { mailTotal += item.total; mailCount++; }
+    if(item.type === 'ip') { ipTotal += item.total; ipCount++; }
+    if(item.date === today) todaySpending += item.total;
   });
-
-  if(data.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No transaction records found.</td></tr>`;
-  }
-
+  
   document.getElementById('total-mail-cost').textContent = '৳' + mailTotal.toLocaleString();
   document.getElementById('total-ip-cost').textContent = '৳' + ipTotal.toLocaleString();
   document.getElementById('grand-total').textContent = '৳' + (mailTotal + ipTotal).toLocaleString();
+  document.getElementById('mail-count').textContent = mailCount;
+  document.getElementById('ip-count').textContent = ipCount;
+  document.getElementById('total-count').textContent = data.length;
+  document.getElementById('today-spending').textContent = '৳' + todaySpending.toLocaleString();
+  
+  // Averages
+  document.getElementById('avg-mail').textContent = '৳' + (mailCount > 0 ? (mailTotal / mailCount).toFixed(2) : 0).toLocaleString();
+  document.getElementById('avg-ip').textContent = '৳' + (ipCount > 0 ? (ipTotal / ipCount).toFixed(2) : 0).toLocaleString();
+}
+
+function renderTables() {
+  const filter = document.getElementById('filter').value;
+  const searchQuery = document.getElementById('search-input').value.toLowerCase();
+  const tbody = document.getElementById('txn-body');
+  
+  tbody.innerHTML = '';
+  
+  const filteredData = data.filter(item => {
+    const matchesFilter = filter === 'all' || filter === item.type;
+    const matchesSearch = item.type.toLowerCase().includes(searchQuery) || 
+                          item.date.includes(searchQuery) ||
+                          item.price.toString().includes(searchQuery) ||
+                          item.qty.toString().includes(searchQuery);
+    return matchesFilter && matchesSearch;
+  });
+  
+  filteredData.forEach(item => {
+    const badgeClass = item.type === 'mail' ? 'badge-mail' : 'badge-ip';
+    tbody.innerHTML += `
+      <tr>
+        <td><span class="badge ${badgeClass}">${item.type.toUpperCase()}</span></td>
+        <td style="color: var(--text-muted); font-size: 13px;">${item.date}</td>
+        <td class="amt">৳${item.price.toLocaleString()}</td>
+        <td class="amt">${item.qty.toLocaleString()}</td>
+        <td class="amt" style="font-weight: 700; color: var(--text-main);">৳${item.total.toLocaleString()}</td>
+        <td>
+          <div class="action-btns">
+            <button class="edit-btn" onclick="editEntry(${item.id})">Edit</button>
+            <button class="del-btn" onclick="deleteEntry(${item.id})">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  if(filteredData.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 40px; color: var(--text-muted);">No transaction records found.</td></tr>`;
+  }
+  
+  updateStats();
+}
+
+function updateChart() {
+  const ctx = document.getElementById('spendingChart').getContext('2d');
+  const timeFilter = document.getElementById('chart-filter').value;
+  
+  // Filter data by time range
+  let filteredData = [...data];
+  if(timeFilter !== 'all') {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - parseInt(timeFilter));
+    const cutoffStr = cutoffDate.toISOString().split('T')[0];
+    filteredData = data.filter(item => item.date >= cutoffStr);
+  }
+  
+  // Group by date and calculate totals
+  const grouped = {};
+  filteredData.forEach(item => {
+    if(!grouped[item.date]) grouped[item.date] = { mail: 0, ip: 0 };
+    if(item.type === 'mail') grouped[item.date].mail += item.total;
+    else grouped[item.date].ip += item.total;
+  });
+  
+  const dates = Object.keys(grouped).sort();
+  const mailData = dates.map(date => grouped[date].mail);
+  const ipData = dates.map(date => grouped[date].ip);
+  
+  // Destroy existing chart
+  if(chartInstance) chartInstance.destroy();
+  
+  // Create new chart
+  const isDark = htmlEl.getAttribute('data-theme') === 'dark';
+  const textColor = isDark ? '#A3AED1' : '#2B3674';
+  const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : '#E2E8F0';
+  
+  chartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [
+        {
+          label: 'Mail Investment',
+          data: mailData,
+          borderColor: '#4318FF',
+          backgroundColor: 'rgba(67, 24, 255, 0.1)',
+          fill: true,
+          tension: 0.4
+        },
+        {
+          label: 'IP Infrastructure',
+          data: ipData,
+          borderColor: '#00B5D8',
+          backgroundColor: 'rgba(0, 181, 216, 0.1)',
+          fill: true,
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: textColor, font: { family: 'Plus Jakarta Sans' } }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: textColor, maxTicksLimit: 10 },
+          grid: { color: gridColor }
+        },
+        y: {
+          ticks: { color: textColor },
+          grid: { color: gridColor }
+        }
+      }
+    }
+  });
 }
 
 // Init Dates
@@ -374,6 +682,7 @@ const dateOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'n
 document.getElementById('live-date').textContent = new Date().toLocaleDateString('en-US', dateOptions);
 
 renderTables();
+updateChart();
 </script>
 
 </body>
